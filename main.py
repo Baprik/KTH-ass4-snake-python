@@ -13,6 +13,7 @@
 import random
 import typing
 
+#test push
 
 
 # info is called when you create your Battlesnake on play.battlesnake.com
@@ -68,7 +69,8 @@ def move(game_state: typing.Dict) -> typing.Dict:
     board_width = game_state['board']['width']
     board_height = game_state['board']['height']
 
-    is_move_safe = prevent_out_of_bounds(my_head, board_width, board_height, is_move_safe)
+    is_move_safe = prevent_out_of_bounds(my_head, board_width, board_height,
+                                         is_move_safe)
     print(is_move_safe)
 
     # TODO: Step 2 - Prevent your Battlesnake from colliding with itself
@@ -78,8 +80,12 @@ def move(game_state: typing.Dict) -> typing.Dict:
     print(is_move_safe)
 
     # TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
-    opponents = [snake for snake in game_state['board']['snakes'] if snake['id'] != game_state['you']['id']]
-    is_move_safe = prevent_collision_with_opponents(opponents, my_body, is_move_safe)
+    opponents = [
+        snake for snake in game_state['board']['snakes']
+        if snake['id'] != game_state['you']['id']
+    ]
+    is_move_safe = prevent_collision_with_opponents(opponents, my_body,
+                                                    is_move_safe)
 
     # Are there any safe moves left?
     safe_moves = []
@@ -102,6 +108,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
     print(f"MOVE {game_state['turn']}: {next_move}")
     return {"move": next_move}
 
+
 def prevent_out_of_bounds(my_head, board_width, board_height, is_move_safe):
     if my_head['x'] == 0:
         is_move_safe['left'] = False
@@ -113,6 +120,7 @@ def prevent_out_of_bounds(my_head, board_width, board_height, is_move_safe):
         is_move_safe['up'] = False
     return is_move_safe
 
+
 def prevent_collision_with_self(my_body, is_move_safe):
     my_head = my_body[0]
     for body_part in my_body[1:-1]:
@@ -121,16 +129,22 @@ def prevent_collision_with_self(my_body, is_move_safe):
                 is_move_safe[move] = is_a_move_safe(move, my_head, body_part)
     return is_move_safe
 
+
 def is_a_move_safe(move, head, body_part):
-    if move == 'up' and body_part['y'] == head['y'] + 1 and body_part['x'] == head['x']:
+    if move == 'up' and body_part['y'] == head['y'] + 1 and body_part[
+            'x'] == head['x']:
         return False
-    if move == 'down' and body_part['y'] == head['y'] - 1  and body_part['x'] == head['x']:
+    if move == 'down' and body_part['y'] == head['y'] - 1 and body_part[
+            'x'] == head['x']:
         return False
-    if move == 'left' and body_part['x'] == head['x'] - 1  and body_part['y'] == head['y']:
+    if move == 'left' and body_part['x'] == head['x'] - 1 and body_part[
+            'y'] == head['y']:
         return False
-    if move == 'right' and body_part['x'] == head['x'] + 1  and body_part['y'] == head['y']:
+    if move == 'right' and body_part['x'] == head['x'] + 1 and body_part[
+            'y'] == head['y']:
         return False
-    return True    
+    return True
+
 
 def prevent_collision_with_opponents(opponents, my_body, is_move_safe):
     my_head = my_body[0]
@@ -138,7 +152,8 @@ def prevent_collision_with_opponents(opponents, my_body, is_move_safe):
         for body_part in opponent['body']:
             for move, isSafe in is_move_safe.items():
                 if isSafe:
-                    is_move_safe[move] = is_a_move_safe(move, my_head, body_part)
+                    is_move_safe[move] = is_a_move_safe(
+                        move, my_head, body_part)
     return is_move_safe
 
 
