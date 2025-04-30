@@ -14,6 +14,7 @@ import random
 import typing
 
 
+
 # info is called when you create your Battlesnake on play.battlesnake.com
 # and controls your Battlesnake's appearance
 # TIP: If you open your Battlesnake URL in a browser you should see this data
@@ -31,6 +32,7 @@ def info() -> typing.Dict:
 
 # start is called when your Battlesnake begins a game
 def start(game_state: typing.Dict):
+    print(game_state)
     print("GAME START")
 
 
@@ -44,12 +46,7 @@ def end(game_state: typing.Dict):
 # See https://docs.battlesnake.com/api/example-move for available data
 def move(game_state: typing.Dict) -> typing.Dict:
 
-    is_move_safe = {
-      "up": True, 
-      "down": True, 
-      "left": True, 
-      "right": True
-    }
+    is_move_safe = {"up": True, "down": True, "left": True, "right": True}
 
     # We've included code to prevent your Battlesnake from moving backwards
     my_head = game_state["you"]["body"][0]  # Coordinates of your head
@@ -66,25 +63,34 @@ def move(game_state: typing.Dict) -> typing.Dict:
 
     elif my_neck["y"] > my_head["y"]:  # Neck is above head, don't move up
         is_move_safe["up"] = False
-
+    print(is_move_safe)
     # TODO: Step 1 - Prevent your Battlesnake from moving out of bounds
-    # board_width = game_state['board']['width']
-    # board_height = game_state['board']['height']
+    board_width = game_state['board']['width']
+    board_height = game_state['board']['height']
+
+    is_move_safe = prevent_out_of_bounds(my_head, board_width, board_height, is_move_safe)
+    print(is_move_safe)
 
     # TODO: Step 2 - Prevent your Battlesnake from colliding with itself
-    # my_body = game_state['you']['body']
+    my_body = game_state['you']['body']
+
+    is_move_safe = prevent_collision_with_self(my_body, is_move_safe)
+    print(is_move_safe)
 
     # TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
-    # opponents = game_state['board']['snakes']
+    opponents = [snake for snake in game_state['board']['snakes'] if snake['id'] != game_state['you']['id']]
+    is_move_safe = prevent_collision_with_opponents(opponents, my_body, is_move_safe)
 
     # Are there any safe moves left?
     safe_moves = []
+    print(f"Snake (x,y) = ({my_head},")
     for move, isSafe in is_move_safe.items():
         if isSafe:
             safe_moves.append(move)
 
     if len(safe_moves) == 0:
-        print(f"MOVE {game_state['turn']}: No safe moves detected! Moving down")
+        print(
+            f"MOVE {game_state['turn']}: No safe moves detected! Moving down")
         return {"move": "down"}
 
     # Choose a random move from the safe ones
@@ -96,14 +102,49 @@ def move(game_state: typing.Dict) -> typing.Dict:
     print(f"MOVE {game_state['turn']}: {next_move}")
     return {"move": next_move}
 
+def prevent_out_of_bounds(my_head, board_width, board_height, is_move_safe):
+    if my_head['x'] == 0:
+        is_move_safe['left'] = False
+    if my_head['x'] == board_width - 1:
+        is_move_safe['right'] = False
+    if my_head['y'] == 0:
+        is_move_safe['down'] = False
+    if my_head['y'] == board_height - 1:
+        is_move_safe['up'] = False
+    return is_move_safe
+
+def prevent_collision_with_self(my_body, is_move_safe):
+    my_head = my_body[0]
+    for body_part in my_body[1:-1]:
+        for move, isSafe in is_move_safe.items():
+            if isSafe:
+                is_move_safe[move] = is_a_move_safe(move, my_head, body_part)
+    return is_move_safe
+
+def is_a_move_safe(move, head, body_part):
+    if move == 'up' and body_part['y'] == head['y'] + 1 and body_part['x'] == head['x']:
+        return False
+    if move == 'down' and body_part['y'] == head['y'] - 1  and body_part['x'] == head['x']:
+        return False
+    if move == 'left' and body_part['x'] == head['x'] - 1  and body_part['y'] == head['y']:
+        return False
+    if move == 'right' and body_part['x'] == head['x'] + 1  and body_part['y'] == head['y']:
+        return False
+    return True    
+
+def prevent_collision_with_opponents(opponents, my_body, is_move_safe):
+    my_head = my_body[0]
+    for opponent in opponents:
+        for body_part in opponent['body']:
+            for move, isSafe in is_move_safe.items():
+                if isSafe:
+                    is_move_safe[move] = is_a_move_safe(move, my_head, body_part)
+    return is_move_safe
+
 
 # Start server when `python main.py` is run
 if __name__ == "__main__":
     from server import run_server
+    print("Starting Battlesnake Server...")
 
-    run_server({
-        "info": info, 
-        "start": start, 
-         "move": move, 
-        "end": end
-    })
+    run_server({"info": info, "start": start, "move": move, "end": end})
