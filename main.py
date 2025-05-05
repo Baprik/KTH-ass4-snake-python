@@ -33,6 +33,8 @@ def info() -> typing.Dict:
 
 
 def start(game_state: typing.Dict):
+    print(game_state)
+    print(game_state.keys())
     print("GAME START")
 
 
@@ -61,6 +63,7 @@ def move(game_state: typing.Dict) -> typing.Dict:
     for idx, snake in enumerate(game_state["board"]["snakes"]):
         if snake["id"] == game_state["you"]["id"]:
             snake_index = idx
+            print(snake)
             break
 
     if snake_index == 0:
