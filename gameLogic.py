@@ -68,7 +68,7 @@ def makeMove(game_state, curr_snake_id, move):
     potential_snake_index = 0
   
     for snake in new_game_state["board"]["snakes"]:
-        if snake["head"]["x"] == head_x and snake["head"]["y"] == head_y
+        if snake["head"]["x"] == head_x and snake["head"]["y"] == head_y:
             collide_with_snake_head = True
             potential_snake_collided = snake
             break 
