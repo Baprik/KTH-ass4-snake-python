@@ -63,16 +63,16 @@ def move(game_state: typing.Dict) -> typing.Dict:
     for idx, snake in enumerate(game_state["board"]["snakes"]):
         if snake["id"] == game_state["you"]["id"]:
             snake_index = idx
-            print(snake)
+            #print(snake)
             break
 
     if snake_index == 0:
-        policy = "minmax"
-        print(f"{game_state['you']['id']} :minmax")
-    else:
         policy = "random"
-        print(f"{game_state['you']['id']} : random")
-    args = {"policy": policy}
+        print(f"{game_state['you']['id']} : {policy}")
+    else:
+        policy = "minmax"
+        print(f"{game_state['you']['id']} : {policy}")
+    args = {"policy": "minmax"}
     
 
     next_move = choose_move(safe_moves, game_state, args)

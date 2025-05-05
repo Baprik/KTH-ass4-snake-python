@@ -20,7 +20,7 @@ def isGameOver(game_state, snake_id):
   if (game_state is None):
       return True
 
-  snake_state = game_state["snakes"]
+  snake_state = game_state["board"]["snakes"]
 
   for snake in snake_state:
       if (snake["id"] == snake_id):
@@ -30,8 +30,8 @@ def isGameOver(game_state, snake_id):
 
 # Creates a new version of game state with the move and the correspondent snake
 def makeMove(game_state, curr_snake_id, move):
-    board_width = game_state["width"]
-    board_height =  game_state["height"]
+    board_width = game_state["board"]["width"]
+    board_height =  game_state["board"]["height"]
 
     # new game state to update, change the id to current snake
     new_game_state = createNewGameState(
@@ -49,6 +49,9 @@ def makeMove(game_state, curr_snake_id, move):
 
     # Acquire current snake info
     curr_snake_index = findCurrentSnake(new_game_state, curr_snake_id)
+    if curr_snake_index is None:
+        print("Snake index is None !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        return None
 
     current_snake = new_game_state["board"]["snakes"][curr_snake_index]
 
@@ -67,17 +70,18 @@ def makeMove(game_state, curr_snake_id, move):
     potential_snake_collided = None
     potential_snake_index = 0
   
-    for snake in new_game_state["board"]["snakes"]:
+
+    for idx, snake in enumerate(new_game_state["board"]["snakes"]):
         if snake["head"]["x"] == head_x and snake["head"]["y"] == head_y:
             collide_with_snake_head = True
             potential_snake_collided = snake
-            break 
+            potential_snake_index = idx
+            break
         for body_part in snake["body"]:
             if body_part["x"] == head_x and body_part["y"] == head_y:
                 potential_snake_collided = snake
                 collide_with_snake = True
                 break
-        potential_snake_index += 1
     for food in new_game_state["board"]["food"]:
         if food["x"] == head_x and food["y"] == head_y:
             collide_with_food = True
@@ -102,6 +106,9 @@ def makeMove(game_state, curr_snake_id, move):
 
             # Index might have changed when snake is removed
             curr_snake_index = findCurrentSnake(new_game_state, curr_snake_id)
+            if curr_snake_index is None:
+                print("Snake index is None !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                return None
 
             # Snake moves forward and updates all coords in new game state
             moveForward(new_game_state, curr_snake_index, head_x, head_y, False)
@@ -118,6 +125,9 @@ def makeMove(game_state, curr_snake_id, move):
 
             # Index might have changed when snake is removed
             destination_snake_index = findCurrentSnake(new_game_state, destination_snake_index)
+            if destination_snake_index is None:
+                print("Snake index is None !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+                return None
 
             # Same size case
             if (destination_snake_length == curr_snake_length):
@@ -179,8 +189,15 @@ def findCurrentSnake(new_game_state, curr_snake_id):
     if snake["id"] == curr_snake_id:
       return curr_snake_index
     curr_snake_index += 1
+  return None
 
 def removeKilledSnake(gamestate, snake_index):
+  if snake_index == None:
+      print("Snake index is None !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+      return
+  if(gamestate["board"]["snakes"] == []):
+      print("No snakes left !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+      return
   gamestate["board"]["snakes"].pop(snake_index)
 
 
@@ -188,7 +205,6 @@ def removeKilledSnake(gamestate, snake_index):
 def moveForward(game_state,  curr_snake_index, head_x, head_y, eat_food):
   
     snake = game_state["board"]["snakes"][curr_snake_index]
-    new_snake = copy.deepcopy(snake)
     snake["head"]["x"] = head_x
     snake["head"]["y"] = head_y
 
@@ -198,7 +214,6 @@ def moveForward(game_state,  curr_snake_index, head_x, head_y, eat_food):
     prev_x = head_x
     prev_y = head_y
 
-    body_index = 1
     for body in snake["body"][1:]:
         curr_x = body["x"]
         curr_y = body["y"]

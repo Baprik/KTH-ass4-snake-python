@@ -19,7 +19,10 @@ def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id,
     next_snake_id = game_state["board"]["snakes"][(curr_index + 1) %
                                          len(game_state["board"]["snakes"])]["id"]
 
-    moves = select_safe_move(game_state, snake_id=next_snake_id)
+    moves = select_safe_move(game_state, snake_id=curr_snake_id)
+    print(f"Depth: {depth}, Snake: {curr_snake_id}, Moves: {moves}, is you {curr_snake_id == main_snake_id}")
+    if (len(moves) == 0):
+        print(game_state)
 
     if (curr_snake_id == main_snake_id):  #i.e. the maximizer
         highest_value = float("-inf")
@@ -73,13 +76,13 @@ def miniMax_value(game_state, safe_moves):
     snakes_num = len(game_state["board"]["snakes"])
 
     if (snakes_num == 4):
-        depth = 2
+        depth = 4
     elif (snakes_num == 3):
-        depth = 2
+        depth = 4
     elif (snakes_num == 2):
-        depth = 2
+        depth = 4
     else:
-        depth = 2
+        depth = 4
 
     result_value, best_move = miniMax(current_game_state, depth,
                                       game_state["you"]["id"],
@@ -88,8 +91,6 @@ def miniMax_value(game_state, safe_moves):
                                       current_turn)
     print(f"Minimax value: {result_value}, Best move: {best_move}")
 
-    if (best_move is not None):
-        if (best_move in safe_moves):
-            safe_moves[best_move] += result_value
+    
 
     return best_move
