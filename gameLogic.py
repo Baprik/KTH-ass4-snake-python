@@ -209,7 +209,6 @@ def moveForward(game_state,  curr_snake_index, head_x, head_y, eat_food):
     snake["head"]["y"] = head_y
 
     snake["body"].insert(0, {"x": head_x, "y": head_y})
-    snake["body"][0]["y"] = head_y
 
     if not eat_food:
         snake["body"].pop(-1)
