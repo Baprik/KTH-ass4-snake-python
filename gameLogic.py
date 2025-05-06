@@ -208,21 +208,12 @@ def moveForward(game_state,  curr_snake_index, head_x, head_y, eat_food):
     snake["head"]["x"] = head_x
     snake["head"]["y"] = head_y
 
-    snake["body"][0]["x"] = head_x
+    snake["body"].insert(0, {"x": head_x, "y": head_y})
     snake["body"][0]["y"] = head_y
 
-    prev_x = head_x
-    prev_y = head_y
-
-    for body in snake["body"][1:]:
-        curr_x = body["x"]
-        curr_y = body["y"]
-        body["x"] = prev_x
-        body["y"] = prev_y
-        prev_x = curr_x
-        prev_y = curr_y 
-    if eat_food:
-        snake["body"].append({"x": prev_x, "y": prev_y})
+    if not eat_food:
+        snake["body"].pop(-1)
+        print("simulate not eating")
 
 
 # Update snake's health, -1 health for every turn or 0 if snake dies
