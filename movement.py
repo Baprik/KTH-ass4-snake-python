@@ -1,6 +1,6 @@
 def select_safe_move(game_state, snake_id = False):
     is_move_safe = {"up": True, "down": True, "left": True, "right": True}
-
+    snake = game_state["you"]
     if snake_id:
         snake = game_state["board"]["snakes"][0]
         for s in game_state["board"]["snakes"]:
@@ -34,14 +34,14 @@ def select_safe_move(game_state, snake_id = False):
     
     
     # TODO: Step 2 - Prevent your Battlesnake from colliding with itself
-    my_body = game_state['you']['body']
+    my_body = snake['body']
     
     is_move_safe = prevent_collision_with_self(my_body, is_move_safe)
     
     # TODO: Step 3 - Prevent your Battlesnake from colliding with other Battlesnakes
     opponents = [
       snake for snake in game_state['board']['snakes']
-      if snake['id'] != game_state['you']['id']
+      if snake['id'] != snake['id']
     ]
     is_move_safe = prevent_collision_with_opponents(opponents, my_body,
                                                   is_move_safe)
