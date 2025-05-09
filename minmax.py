@@ -4,6 +4,8 @@ from heuristics import evaluatePoint
 import json 
 import os
 import copy
+from time import time
+
 def save_game_state(game_state, current_turn, depth, moves, heuristic_value=None):
     # Ensure the directory exists
     turn = game_state["turn"]
@@ -20,10 +22,14 @@ def save_game_state(game_state, current_turn, depth, moves, heuristic_value=None
 def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id,
             return_move, alpha, beta, current_turn, list_of_moves=[]):
     # If given game_state reached an end or depth has reached zero, return game_state score
+
+    SAVE_GAME_STATE = False
+
     if (depth == 0 or isGameOver(game_state, previous_snake_id)):
         #save the game state in a json file 
         heuristic_value = evaluatePoint(game_state, depth, curr_snake_id, current_turn)
-        save_game_state(game_state, current_turn, depth, list_of_moves, heuristic_value = heuristic_value)
+        if SAVE_GAME_STATE:
+            save_game_state(game_state, current_turn, depth, list_of_moves, heuristic_value = heuristic_value)
         return heuristic_value
     # get the id of the next snake that we're gonna minimax
     curr_index = 0
@@ -36,9 +42,6 @@ def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id,
                                          len(game_state["board"]["snakes"])]["id"]
 
     moves = select_safe_move(game_state, snake_id=curr_snake_id)
-    print(f"Depth: {depth}, Snake: {curr_snake_id}, Moves: {moves}, is you {curr_snake_id == main_snake_id}")
-    if (len(moves) == 0):
-        print(game_state)
 
     if (curr_snake_id == main_snake_id):  #i.e. the maximizer
         highest_value = float("-inf")
@@ -62,7 +65,8 @@ def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id,
                 break
 
         # print(f"highest :   {curr_snake_id} {best_move}: {highest_value}")
-        save_game_state(game_state, current_turn, depth, list_of_moves, heuristic_value = curr_val)
+        if SAVE_GAME_STATE:
+            save_game_state(game_state, current_turn, depth, list_of_moves, heuristic_value = heuristic_value)
 
         return (highest_value, best_move) if return_move else highest_value
 
@@ -86,34 +90,41 @@ def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id,
             if (beta <= alpha):
                 break
 
-        save_game_state(game_state, current_turn, depth, list_of_moves, heuristic_value = curr_val)
+        if SAVE_GAME_STATE:
+            save_game_state(game_state, current_turn, depth, list_of_moves, heuristic_value = heuristic_value)
 
         return (min_value, best_move) if return_move else min_value
 
 
 # Main function
-def miniMax_value(game_state, safe_moves):
+def miniMax_value(game_state):
+
+    others = {}
     current_game_state = createGameState(game_state, game_state["you"]["id"])
     current_turn = game_state["turn"]
 
     snakes_num = len(game_state["board"]["snakes"])
 
     if (snakes_num == 4):
-        depth = 4
+        depth = 11
     elif (snakes_num == 3):
-        depth = 4
+        depth = 11
     elif (snakes_num == 2):
-        depth = 4
+        depth = 11
     else:
-        depth = 4
-
+        depth = 11
+    t0 = time()
     result_value, best_move = miniMax(current_game_state, depth,
                                       game_state["you"]["id"],
                                       game_state["you"]["id"], None, True,
                                       float("-inf"), float("inf"),
                                       current_turn)
+    t1 = time()
+    duration = t1 - t0
+    others["time"] = duration
+    print(f"Time taken: {t1 - t0:.4f} seconds")
     print(f"Minimax value: {result_value}, Best move: {best_move}")
 
     
 
-    return best_move
+    return best_move, others

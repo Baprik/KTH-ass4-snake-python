@@ -16,6 +16,9 @@ from policy import choose_move
 
 #test push
 
+total_time_minimax = 0
+step = 0
+
 
 # info is called when you create your Battlesnake on play.battlesnake.com
 # and controls your Battlesnake's appearance
@@ -35,6 +38,10 @@ def info() -> typing.Dict:
 def start(game_state: typing.Dict):
     print(game_state)
     print(game_state.keys())
+    global total_time_minimax 
+    global step
+    step = 0
+    total_time_minimax = 0
     print("GAME START")
 
 
@@ -75,10 +82,17 @@ def move(game_state: typing.Dict) -> typing.Dict:
     args = {"policy": "minmax"}
     
 
-    next_move = choose_move(safe_moves, game_state, args)
+    next_move, others = choose_move(safe_moves, game_state, args)
 
-    # TODO: Step 4 - Move towards food instead of random, to regain health and survive longer
-    # food = game_state['board']['food']
+    #if others["time"] exists
+    if "time" in others:
+        time = others["time"]
+        global total_time_minimax
+        global step
+        step += 1
+        total_time_minimax += time
+        print(f"Average Time taken for minimax: {total_time_minimax/step} seconds")
+
 
     print(f"MOVE {game_state['turn']}: {next_move}")
     return {"move": next_move}
@@ -88,5 +102,5 @@ def move(game_state: typing.Dict) -> typing.Dict:
 if __name__ == "__main__":
     from server import run_server
     print("Starting Battlesnake Server...")
-
+ 
     run_server({"info": info, "start": start, "move": move, "end": end})

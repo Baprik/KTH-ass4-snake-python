@@ -50,7 +50,6 @@ def makeMove(game_state, curr_snake_id, move):
     # Acquire current snake info
     curr_snake_index = findCurrentSnake(new_game_state, curr_snake_id)
     if curr_snake_index is None:
-        print("Snake index is None !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         return None
 
     current_snake = new_game_state["board"]["snakes"][curr_snake_index]
@@ -107,7 +106,6 @@ def makeMove(game_state, curr_snake_id, move):
             # Index might have changed when snake is removed
             curr_snake_index = findCurrentSnake(new_game_state, curr_snake_id)
             if curr_snake_index is None:
-                print("Snake index is None !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                 return None
 
             # Snake moves forward and updates all coords in new game state
@@ -126,7 +124,6 @@ def makeMove(game_state, curr_snake_id, move):
             # Index might have changed when snake is removed
             destination_snake_index = findCurrentSnake(new_game_state, destination_snake_index)
             if destination_snake_index is None:
-                print("Snake index is None !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
                 return None
 
             # Same size case
@@ -193,10 +190,8 @@ def findCurrentSnake(new_game_state, curr_snake_id):
 
 def removeKilledSnake(gamestate, snake_index):
   if snake_index == None:
-      print("Snake index is None !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
       return
   if(gamestate["board"]["snakes"] == []):
-      print("No snakes left !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
       return
   gamestate["board"]["snakes"].pop(snake_index)
 
@@ -212,7 +207,6 @@ def moveForward(game_state,  curr_snake_index, head_x, head_y, eat_food):
 
     if not eat_food:
         snake["body"].pop(-1)
-        print("simulate not eating")
 
 
 # Update snake's health, -1 health for every turn or 0 if snake dies

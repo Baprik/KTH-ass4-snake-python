@@ -1,8 +1,13 @@
 def evaluatePoint(game_state, depth, curr_snake_id, current_turn):
-  print("depth:" + str(depth))
   try:
+    if game_state == None :
+      print(f"Game state is None, game state: {game_state}")
+      return 0
+    if not "snakes" in game_state["board"] :
+      print(f"Game state doesn't have 'snakes' field, game state: {game_state}")
+      return 0
     if game_state["board"]["snakes"] == []:
-      print("No snakes left !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+      print(f"Game state 'snakes' is empty")
       return 0
     for i in game_state["board"]["snakes"]:
       if i["id"] == curr_snake_id:
