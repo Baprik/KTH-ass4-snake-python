@@ -31,3 +31,11 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+
+#Other
+
+json/
+*.png
+command
+
+
