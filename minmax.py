@@ -1,4 +1,4 @@
-from movement import select_safe_move
+from movement2 import select_safe_move
 from gameLogic import isGameOver, makeMove, createGameState
 from heuristics import evaluatePoint
 import json 
@@ -27,19 +27,20 @@ def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id,
 
     if (depth == 0 or isGameOver(game_state, previous_snake_id)):
         #save the game state in a json file 
-        heuristic_value = evaluatePoint(game_state, depth, curr_snake_id, current_turn)
+        heuristic_value = evaluatePoint(game_state, depth, curr_snake_id, main_snake_id, current_turn)
         if SAVE_GAME_STATE:
             save_game_state(game_state, current_turn, depth, list_of_moves, heuristic_value = heuristic_value)
         return heuristic_value
     # get the id of the next snake that we're gonna minimax
     curr_index = 0
-    for index, snake in enumerate(game_state["board"]["snakes"]):
+    #for index, snake in enumerate(game_state["board"]["snakes"]):
+    for index, snake in enumerate(game_state["snakes"]):
         if (snake["id"] == curr_snake_id):
             curr_index = index
             break
 
-    next_snake_id = game_state["board"]["snakes"][(curr_index + 1) %
-                                         len(game_state["board"]["snakes"])]["id"]
+    #next_snake_id = game_state["board"]["snakes"][(curr_index + 1) % len(game_state["board"]["snakes"])]["id"]
+    next_snake_id = game_state["snakes"][(curr_index + 1) % len(game_state["snakes"])]["id"]
 
     moves = select_safe_move(game_state, snake_id=curr_snake_id)
 
