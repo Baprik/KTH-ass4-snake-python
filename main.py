@@ -11,7 +11,7 @@
 # For more info see docs.battlesnake.com
 
 import typing
-from movement import select_safe_move
+from movement2 import select_safe_move
 from policy import choose_move
 
 #test push
