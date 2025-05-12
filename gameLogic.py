@@ -1,5 +1,5 @@
 import copy
-
+from utils import border_kill, flood_fill_area
 def createGameState(original_game_state, curr_snake_id):
   # dict_keys(['game', 'turn', 'board', 'you'])
   #for init in main function
@@ -26,7 +26,7 @@ def createGameState(original_game_state, curr_snake_id):
      "shape" : (original_game_state["board"]["width"], original_game_state["board"]["height"]),
       "food" : [( food_pos["x"], food_pos["y"]) for food_pos in original_game_state["board"]["food"]],
       "snakes" : snakes,
-      "main_snake_id" : original_game_state["you"]["id"],
+      "main_snake_id" : original_game_state["you"]["id"], # -> [max_id1, max_id2 ] 
       "curr_snake_id" : curr_snake_id,
   }
   return new_game_state
@@ -56,7 +56,14 @@ def isGameOver(game_state, snake_id):
   snake_state = game_state["snakes"]
 
   for snake in snake_state:
-      if (snake["id"] == snake_id):
+      if snake["id"] == snake_id  :
+          if (snake["health"] <= 0):
+              return True
+          if border_kill(game_state, snake): #it is in a position where it is going to die (if the ennemi plays well)
+              return True
+          if flood_fill_area(game_state, snake["head"]) <= len(snake["body"]):
+              return True
+          
           return False
   return True
 

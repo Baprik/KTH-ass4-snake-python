@@ -1,3 +1,5 @@
+from utils import flood_fill_area, border_kill
+
 def evaluatePoint(game_state, depth, curr_snake_id, main_snake_id, current_turn):
   try:
     if game_state == None :
@@ -16,13 +18,31 @@ def evaluatePoint(game_state, depth, curr_snake_id, main_snake_id, current_turn)
     
 
     #for i in game_state["board"]["snakes"]:
-    for i in game_state["snakes"]:
-      if i["id"] == main_snake_id:
-        return len(i["body"])
+
+
+    main_snake = None
+    for index, snake in enumerate(game_state["snakes"]):
+      if snake["id"] == main_snake_id:
+        main_snake = snake
+        break
       
-    #So he is dead 
-    return float("-inf")
-  
+    if main_snake == None or border_kill(game_state, main_snake): #So he is dead or it will die
+      return float("-inf")
+    
+    snake_length = len(main_snake["body"])
+
+    snakes_alived = len(game_state["snakes"])
+
+    area = flood_fill_area(game_state, main_snake["head"])
+
+    for snake in game_state["snakes"]:
+      if snake["id"] == main_snake_id:
+        continue
+      #it is going to kill a snake 
+      if border_kill(game_state, snake):
+        snakes_alived -= 1
+
+    return area + snake_length - snakes_alived * 10
 
 
 

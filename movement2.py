@@ -38,6 +38,12 @@ def select_safe_move(game_state, snake_id= None):
     opponents = [s for s in game_state["snakes"] if s["id"] != curr_snake["id"]]
     is_move_safe = prevent_collision_with_opponents(opponents, my_head, is_move_safe)
 
+    is_move_safe2 = prevent_potential_collision_with_opponents_head(opponents, my_head, my_body,  is_move_safe)
+
+    #if there is a least one move safe in is_move_safe2
+    if any(is_move_safe2.values()):
+        is_move_safe = is_move_safe2
+
     return [move for move, safe in is_move_safe.items() if safe]
 
 
@@ -84,3 +90,39 @@ def is_a_move_safe(move, head, body_part):
     if move == "right" and (x + 1, y) == (bx, by):
         return False
     return True
+
+def move_to_vector(move):
+    if move == "up":
+        return (0, 1)
+    elif move == "down":
+        return (0, -1)
+    elif move == "left":
+        return (-1, 0)
+    elif move == "right":
+        return (1, 0)
+    else:
+        raise ValueError("Invalid move direction")
+
+def prevent_potential_collision_with_opponents_head(opponents, my_head, my_body, is_move_safe):
+    new_is_move_safe = {key: value for key, value in is_move_safe.items()}
+
+    for opponent in opponents:
+        opponent_head = opponent["head"]
+        opponent_length = len(opponent["body"])
+        
+        for move in is_move_safe:
+            if not is_move_safe[move]:
+                continue  # Skip already unsafe moves
+
+            # Simulate moving to that position
+            dx, dy = move_to_vector(move)
+            new_head = (my_head[0] + dx, my_head[1] + dy)
+
+            diff = (abs(new_head[0] - opponent_head[0]), abs(new_head[1] - opponent_head[1]))
+
+            # If the heads could both move into the same square next turn
+            if diff == (1, 0) or diff == (0, 1):
+                if opponent_length >= len(my_body):
+                    new_is_move_safe[move] = False
+
+    return new_is_move_safe
