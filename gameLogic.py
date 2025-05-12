@@ -12,13 +12,15 @@ def createGameState(original_game_state, curr_snake_id):
     snake_body = [(body_part["x"],body_part["y"]) for body_part in snake["body"]]
     snake_id = snake["id"]
     snake_health = snake["health"]
+    snake_name = snake["name"]
     snake_head = (snake["head"]["x"], snake["head"]["y"])
 
     snake_dict = {
         "id": snake_id,
         "body": snake_body,
         "health": snake_health,
-        "head": snake_head
+        "head": snake_head,
+        "name": snake_name
     }
     snakes.append(snake_dict)
 

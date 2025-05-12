@@ -22,7 +22,12 @@ def save_game_state(game_state, current_turn, depth, moves, heuristic_value=None
 def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id,
             return_move, alpha, beta, current_turn, list_of_moves=[]):
     # If given game_state reached an end or depth has reached zero, return game_state score
-
+    maximizer = False
+    for index, snake in enumerate(game_state["snakes"]):
+        if (snake["id"] == curr_snake_id):
+            if(snake["name"] == "Agent25-G12"):
+                maximizer = True
+            break
     SAVE_GAME_STATE = False
 
     if (depth == 0 or isGameOver(game_state, previous_snake_id)):
@@ -44,7 +49,7 @@ def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id,
 
     moves = select_safe_move(game_state, snake_id=curr_snake_id)
 
-    if (curr_snake_id == main_snake_id):  #i.e. the maximizer
+    if (maximizer):  #i.e. the maximizer
         highest_value = float("-inf")
         best_move = None
         for move in moves:
@@ -100,9 +105,12 @@ def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id,
 # Main function
 def miniMax_value(game_state):
 
+    
     others = {}
     current_game_state = createGameState(game_state, game_state["you"]["id"])
     current_turn = game_state["turn"]
+    for index, snake in enumerate(current_game_state["snakes"]):
+        print(snake["name"])
 
     snakes_num = len(game_state["board"]["snakes"])
 
@@ -114,6 +122,8 @@ def miniMax_value(game_state):
         depth = 11
     else:
         depth = 11
+
+    depth = 4 #just debugging
     t0 = time()
     result_value, best_move = miniMax(current_game_state, depth,
                                       game_state["you"]["id"],
