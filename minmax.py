@@ -5,6 +5,7 @@ import json
 import os
 import copy
 from time import time
+import cy_game_logic
 
 def save_game_state(game_state, current_turn, depth, moves, heuristic_value=None):
     # Ensure the directory exists
@@ -75,7 +76,7 @@ def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id,
         min_value = float("inf")
         best_move = None
         for move in moves:
-            new_game_state = makeMove(game_state, curr_snake_id, move)
+            new_game_state = cy_game_logic.makeMove(game_state, curr_snake_id, move)
             list_of_moves_ = copy.copy(list_of_moves)
             list_of_moves_.append(move)
             curr_val = miniMax(new_game_state, depth - 1, next_snake_id,

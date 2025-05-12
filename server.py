@@ -2,6 +2,7 @@ import logging
 import os
 import typing
 
+from pyngrok import ngrok
 from flask import Flask
 from flask import request
 
@@ -42,5 +43,10 @@ def run_server(handlers: typing.Dict):
 
     logging.getLogger("werkzeug").setLevel(logging.ERROR)
 
+    # Set up ngrok for local development
+    if os.environ.get("WERKZEUG_RUN_MAIN") == "true":
+        public_url = ngrok.connect(port)
+        print(f"Public Battlesnake URL: {public_url}")
+
     print(f"\nRunning Battlesnake at http://{host}:{port}")
-    app.run(host=host, port=port)
+    app.run(host=host, port=port,debug=True, use_reloader=True)
