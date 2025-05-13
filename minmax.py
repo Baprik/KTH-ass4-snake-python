@@ -6,6 +6,9 @@ import os
 import copy
 from time import time
 
+
+K_PRUNING = 0.3
+
 def save_game_state(game_state, current_turn, depth, moves, heuristic_value=None):
     # Ensure the directory exists
     turn = game_state["turn"]
@@ -61,7 +64,7 @@ def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id,
                                main_snake_id, curr_snake_id, False, alpha,
                                beta, current_turn + 1, list_of_moves_)
             # print(f"{curr_snake_id} {move}: {curr_val}")
-            if (curr_val > highest_value):
+            if (curr_val > highest_value * (1 + K_PRUNING)):
                 best_move = move
                 highest_value = curr_val
 
@@ -87,7 +90,7 @@ def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id,
                                main_snake_id, curr_snake_id, False, alpha,
                                beta, current_turn,list_of_moves_)
             # print(f"{curr_snake_id} {move}: {curr_val}")
-            if (min_value > curr_val):
+            if (min_value * K_PRUNING > curr_val):
                 best_move = move
                 min_value = curr_val
 
@@ -116,13 +119,13 @@ def miniMax_value(game_state):
     snakes_num = len(game_state["board"]["snakes"])
 
     if (snakes_num == 4):
-        depth = 10
+        depth = 11
     elif (snakes_num == 3):
-        depth = 10
+        depth = 11
     elif (snakes_num == 2):
-        depth = 10
+        depth = 11
     else:
-        depth = 10
+        depth = 11
     #depth = 6
 
     t0 = time()

@@ -54,7 +54,7 @@ def evaluatePoint(game_state, depth, curr_snake_id, main_snake_id, current_turn)
     else:
       health = -100
 
-    if head_pos[0] == 0 or head_pos[0] == game_state["shape"][0] - 1 or head_pos[1] == 0 or head_pos[1] == game_state["shape"][1] - 1:
+    if head_pos[0] <= 1 or head_pos[0] >= game_state["shape"][0] - 2 or head_pos[1] <= 0 or head_pos[1] >= game_state["shape"][1] - 2:
       misposed = -100
     else:
       misposed = 0
