@@ -37,23 +37,29 @@ def evaluatePoint(game_state, depth, curr_snake_id, main_snake_id, current_turn)
     #snake_length = 0
     #    snake_length += len(snake["body"])  #we don't want to eat though
 
-    snakes_alived = len(game_state["snakes"])
+    otherSnakes = len(game_state["snakes"]) - teamMembers
+    head_pos = main_snake["head"]
 
-    area = flood_fill_area(game_state, main_snake["head"])
+    area = flood_fill_area(game_state, head_pos)
 
     for snake in game_state["snakes"]:
       if snake["name"] == "Agent25-G12":
         continue
       #it is going to kill a snake 
       if border_kill(game_state, snake):
-        snakes_alived -= 1
+        otherSnakes -= 1
 
-    if main_snake["health"] >= 40:
+    if main_snake["health"] >= 40: #nice idea
       health = 0
     else:
       health = -100
 
-    return area + teamMembers * 100  - snakes_alived * 10 + health #maybe add distance from eachother
+    if head_pos[0] == 0 or head_pos[0] == game_state["shape"][0] - 1 or head_pos[1] == 0 or head_pos[1] == game_state["shape"][1] - 1:
+      misposed = -100
+    else:
+      misposed = 0
+
+    return area * 10  + teamMembers * 300  - otherSnakes * 10 + health + misposed #maybe add distance from eachother
 
 
 

@@ -108,6 +108,7 @@ def miniMax_value(game_state):
     
     others = {}
     current_game_state = createGameState(game_state, game_state["you"]["id"])
+    print( select_safe_move(current_game_state, snake_id=current_game_state["main_snake_id"]))
     current_turn = game_state["turn"]
     for index, snake in enumerate(current_game_state["snakes"]):
         print(snake["name"])
@@ -115,21 +116,23 @@ def miniMax_value(game_state):
     snakes_num = len(game_state["board"]["snakes"])
 
     if (snakes_num == 4):
-        depth = 11
+        depth = 10
     elif (snakes_num == 3):
-        depth = 11
+        depth = 10
     elif (snakes_num == 2):
-        depth = 11
+        depth = 10
     else:
-        depth = 11
+        depth = 10
+    #depth = 6
 
-    depth = 4 #just debugging
     t0 = time()
     result_value, best_move = miniMax(current_game_state, depth,
                                       game_state["you"]["id"],
                                       game_state["you"]["id"], None, True,
                                       float("-inf"), float("inf"),
                                       current_turn)
+    if best_move is None:
+        best_move = select_safe_move(current_game_state, snake_id=current_game_state["main_snake_id"])[0]
     t1 = time()
     duration = t1 - t0
     others["time"] = duration
