@@ -28,7 +28,7 @@ def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id,
     maximizer = False
     for index, snake in enumerate(game_state["snakes"]):
         if (snake["id"] == curr_snake_id):
-            if(snake["name"] == "Agent25-G12"):
+            if(snake["name"] == "MAS2025-12"):
                 maximizer = True
             break
     SAVE_GAME_STATE = False
@@ -126,7 +126,7 @@ def miniMax_value(game_state):
         depth = 11
     else:
         depth = 11
-    #depth = 6
+    depth = 10
 
     t0 = time()
     result_value, best_move = miniMax(current_game_state, depth,

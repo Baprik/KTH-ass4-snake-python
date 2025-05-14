@@ -31,7 +31,7 @@ def evaluatePoint(game_state, depth, curr_snake_id, main_snake_id, current_turn)
     
     teamMembers = 0
     for snake in game_state["snakes"]:
-      if snake["name"] == "Agent25-G12":
+      if snake["name"] == "MAS2025-12":
         teamMembers += 1
 
     #snake_length = 0
@@ -43,7 +43,7 @@ def evaluatePoint(game_state, depth, curr_snake_id, main_snake_id, current_turn)
     area = flood_fill_area(game_state, head_pos)
 
     for snake in game_state["snakes"]:
-      if snake["name"] == "Agent25-G12":
+      if snake["name"] == "MAS2025-12":
         continue
       #it is going to kill a snake 
       if border_kill(game_state, snake):
