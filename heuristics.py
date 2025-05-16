@@ -1,4 +1,15 @@
 from utils import flood_fill_area, border_kill
+import math
+def distance_to_closest_body_part(ourSnake, otherSnake):
+  (headx, heady) = ourSnake["body"][0]
+  minDist = 100
+  for (bodyx, bodyy) in otherSnake["body"]:
+    newDist = math.sqrt((headx-bodyx)**2+(heady-bodyy)**2)
+    if newDist < minDist:
+      minDist = newDist
+  if minDist == 100:
+    return 0
+  return minDist
 
 def distance_to_border(snake, max_y):
     (x, y) = snake["first_move"]
@@ -77,12 +88,18 @@ def evaluatePoint(game_state, depth, curr_snake_id, main_snake_id, current_turn)
 
     distanceFromBorder = 0
     
-    for snake in game_state["snakes"]:
-      if snake["first_move"] != None and snake["name"] == "MAS2025-12":
-        distanceFromBorder = distance_to_border(snake, game_state["shape"][1] - 1)
+    #for snake in game_state["snakes"]:
+    if main_snake["first_move"] != None:
+      distanceFromBorder += distance_to_border(main_snake, game_state["shape"][1] - 1)
         
+    distanceToLongerSnakesAndTeammate = 0
+    for snake in game_state["snakes"]:
+      if snake == main_snake:
+        continue
+      if snake["name"] == "MAS2025-12" or len(snake["body"]) > len(main_snake["body"]): #want to increase distance to teammate and longer snakes
+        distanceToLongerSnakesAndTeammate += distance_to_closest_body_part(snake, main_snake)
 
-    return teamMembers * 400  - otherSnakes * 200 + health*2 + distanceFromBorder * 30 #+ area * 10   #misposed  #maybe add distance from eachother
+    return teamMembers * 400  - otherSnakes * 200 + health*2 + distanceFromBorder * 50 + distanceToLongerSnakesAndTeammate * 5#+ area * 10   #misposed  #maybe add distance from eachother
 
 
   except KeyError as e:
