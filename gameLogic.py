@@ -20,7 +20,8 @@ def createGameState(original_game_state, curr_snake_id):
         "body": snake_body,
         "health": snake_health,
         "head": snake_head,
-        "name": snake_name
+        "name": snake_name,
+        "first_move": None
     }
     snakes.append(snake_dict)
 
@@ -99,6 +100,9 @@ def makeMove(game_state, curr_snake_id, move):
 
     #current_snake = new_game_state["board"]["snakes"][curr_snake_index]
     current_snake = new_game_state["snakes"][curr_snake_index]
+    if current_snake["first_move"] == None:
+       current_snake["first_move"] = (head_x, head_y)
+
 
 
     # Check if snake destination hits border

@@ -1,5 +1,19 @@
 from utils import flood_fill_area, border_kill
 
+def distance_to_border(snake, max_y):
+    (x, y) = snake["first_move"]
+    max_x = max_y
+
+    #Distances to each border
+    distances = [
+        x,               
+        y,               
+        max_x - x,       
+        max_y - y        
+    ]
+
+    return min(distances)
+
 def evaluatePoint(game_state, depth, curr_snake_id, main_snake_id, current_turn):
   try:
     if game_state == None :
@@ -51,19 +65,24 @@ def evaluatePoint(game_state, depth, curr_snake_id, main_snake_id, current_turn)
 
     if main_snake["health"] >= 40: #nice idea
       health = 0
-    else:
+    elif main_snake["health"] >= 20:
       health = -100
+    else:
+      health = -300
 
     if head_pos[0] <= 1 or head_pos[0] >= game_state["shape"][0] - 2 or head_pos[1] <= 0 or head_pos[1] >= game_state["shape"][1] - 2:
       misposed = -100
     else:
       misposed = 0
 
-    return area * 10  + teamMembers * 300  - otherSnakes * 10 + health + misposed #maybe add distance from eachother
+    distanceFromBorder = 0
+    
+    for snake in game_state["snakes"]:
+      if snake["first_move"] != None and snake["name"] == "MAS2025-12":
+        distanceFromBorder = distance_to_border(snake, game_state["shape"][1] - 1)
+        
 
-
-
-
+    return teamMembers * 400  - otherSnakes * 200 + health*2 + distanceFromBorder * 30 #+ area * 10   #misposed  #maybe add distance from eachother
 
 
   except KeyError as e:
@@ -74,3 +93,4 @@ def evaluatePoint(game_state, depth, curr_snake_id, main_snake_id, current_turn)
     print(f"KeyError: {game_state} is empty")
     print(f"An error occurred: {e}")
     return float("-inf")
+  
