@@ -62,7 +62,7 @@ def prevent_out_of_bounds(my_head, board_width, board_height, is_move_safe):
 
 def prevent_collision_with_self(my_body, is_move_safe):
     head = my_body[0]
-    for body_part in my_body[1:]:
+    for body_part in my_body[1:-1]:
         for move in list(is_move_safe.keys()):
             if is_move_safe[move] and not is_a_move_safe(move, head, body_part):
                 is_move_safe[move] = False
@@ -71,7 +71,7 @@ def prevent_collision_with_self(my_body, is_move_safe):
 
 def prevent_collision_with_opponents(opponents, my_head, is_move_safe):
     for opponent in opponents:
-        for body_part in opponent["body"]:
+        for body_part in opponent["body"][:-1]:
             for move in list(is_move_safe.keys()):
                 if is_move_safe[move] and not is_a_move_safe(move, my_head, body_part):
                     is_move_safe[move] = False

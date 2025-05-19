@@ -1,9 +1,9 @@
 from utils import flood_fill_area, border_kill
 import math
 def distance_to_closest_body_part(ourSnake, otherSnake):
-  (headx, heady) = ourSnake["body"][0]
+  headx, heady = ourSnake["body"][0]
   minDist = 100
-  for (bodyx, bodyy) in otherSnake["body"]:
+  for bodyx, bodyy in otherSnake["body"][0]:
     newDist = math.sqrt((headx-bodyx)**2+(heady-bodyy)**2)
     if newDist < minDist:
       minDist = newDist

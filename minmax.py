@@ -119,14 +119,13 @@ def miniMax_value(game_state):
     snakes_num = len(game_state["board"]["snakes"])
 
     if (snakes_num == 4):
-        depth = 11
+        depth = 8
     elif (snakes_num == 3):
-        depth = 11
+        depth = 9
     elif (snakes_num == 2):
-        depth = 11
+        depth = 12
     else:
-        depth = 11
-    depth = 10
+        depth = 12
 
     t0 = time()
     result_value, best_move = miniMax(current_game_state, depth,
