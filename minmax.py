@@ -8,6 +8,7 @@ from time import time
 
 
 K_PRUNING = 0.3
+forcedDepth = 9999
 
 def save_game_state(game_state, current_turn, depth, moves, heuristic_value=None):
     # Ensure the directory exists
@@ -23,7 +24,10 @@ def save_game_state(game_state, current_turn, depth, moves, heuristic_value=None
         json.dump(game_state, f, indent=4)
 
 def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id,
-            return_move, alpha, beta, current_turn, list_of_moves=[]):
+            return_move, alpha, beta, current_turn, startTime, list_of_moves=[]):
+    global forcedDepth
+    print(f"Value: {forcedDepth}")
+    #print("startTime is:", startTime, type(startTime))
     # If given game_state reached an end or depth has reached zero, return game_state score
     maximizer = False
     for index, snake in enumerate(game_state["snakes"]):
@@ -32,10 +36,21 @@ def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id,
                 maximizer = True
             break
     SAVE_GAME_STATE = False
-
-    if (depth == 0 or isGameOver(game_state, previous_snake_id)):
+    currentTime = time()
+    difference = currentTime - startTime
+    if isGameOver(game_state, previous_snake_id) or (difference > 0.0015 and depth <= forcedDepth) or depth <= 0:#(depth == 0 or isGameOver(game_state, previous_snake_id)):
         #save the game state in a json file 
+        #print(depth)
+        if forcedDepth == 9999 and difference > 0.0015:
+            forcedDepth = depth
+            print(f"Forced: {forcedDepth}")
+            #print(f"number of moves: {len(list_of_moves)}, depth: {depth}, Time: {difference}")
+        if forcedDepth == 9999:
+            print(f"Evaluate: {depth}")
         heuristic_value = evaluatePoint(game_state, depth, curr_snake_id, main_snake_id, current_turn)
+        # if curr_snake_id == main_snake_id:
+        #     print(list_of_moves)
+        #     print(f"number of moves: {len(list_of_moves)}, depth: {depth}, Time: {difference}")
         if SAVE_GAME_STATE:
             save_game_state(game_state, current_turn, depth, list_of_moves, heuristic_value = heuristic_value)
         return heuristic_value
@@ -62,7 +77,7 @@ def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id,
             list_of_moves_.append(move)
             curr_val = miniMax(new_game_state, depth - 1, next_snake_id,
                                main_snake_id, curr_snake_id, False, alpha,
-                               beta, current_turn + 1, list_of_moves_)
+                               beta, current_turn + 1, startTime, list_of_moves_)
             # print(f"{curr_snake_id} {move}: {curr_val}")
             if (curr_val > highest_value * (1 + K_PRUNING)):
                 best_move = move
@@ -88,7 +103,7 @@ def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id,
             list_of_moves_.append(move)
             curr_val = miniMax(new_game_state, depth - 1, next_snake_id,
                                main_snake_id, curr_snake_id, False, alpha,
-                               beta, current_turn,list_of_moves_)
+                               beta, current_turn, startTime, list_of_moves_)
             # print(f"{curr_snake_id} {move}: {curr_val}")
             if (min_value * K_PRUNING > curr_val):
                 best_move = move
@@ -107,7 +122,8 @@ def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id,
 
 # Main function
 def miniMax_value(game_state):
-
+    global forcedDepth
+    forcedDepth = 9999
     
     others = {}
     current_game_state = createGameState(game_state, game_state["you"]["id"])
@@ -126,14 +142,14 @@ def miniMax_value(game_state):
         depth = 11
     else:
         depth = 11
-    depth = 10
+    depth = 12
 
     t0 = time()
     result_value, best_move = miniMax(current_game_state, depth,
                                       game_state["you"]["id"],
                                       game_state["you"]["id"], None, True,
                                       float("-inf"), float("inf"),
-                                      current_turn)
+                                      current_turn, t0)
     if best_move is None:
         best_move = select_safe_move(current_game_state, snake_id=current_game_state["main_snake_id"])[0]
     t1 = time()
