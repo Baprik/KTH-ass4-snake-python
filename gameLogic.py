@@ -138,6 +138,7 @@ def makeMove(game_state, curr_snake_id, move):
         #if food["x"] == head_x and food["y"] == head_y:
         if food == (head_x, head_y):
             collide_with_food = True
+            new_game_state["food"].remove(food)
             break
 
     # if collision is with the head of a snake
