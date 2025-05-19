@@ -7,7 +7,7 @@ import copy
 from time import time
 
 
-K_PRUNING = 0.3
+K_PRUNING = 0.8
 
 def save_game_state(game_state, current_turn, depth, moves, heuristic_value=None):
     # Ensure the directory exists
@@ -64,13 +64,13 @@ def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id,
                                main_snake_id, curr_snake_id, False, alpha,
                                beta, current_turn + 1, list_of_moves_)
             # print(f"{curr_snake_id} {move}: {curr_val}")
-            if (curr_val > highest_value * (1 + K_PRUNING)):
+            if (curr_val > highest_value ):
                 best_move = move
                 highest_value = curr_val
 
             alpha = max(alpha, curr_val)
 
-            if (alpha >= beta):
+            if (alpha >= beta* K_PRUNING):
                 break
 
         # print(f"highest :   {curr_snake_id} {best_move}: {highest_value}")
@@ -90,13 +90,13 @@ def miniMax(game_state, depth, curr_snake_id, main_snake_id, previous_snake_id,
                                main_snake_id, curr_snake_id, False, alpha,
                                beta, current_turn,list_of_moves_)
             # print(f"{curr_snake_id} {move}: {curr_val}")
-            if (min_value * K_PRUNING > curr_val):
+            if (min_value > curr_val):
                 best_move = move
                 min_value = curr_val
 
             beta = min(curr_val, beta)
 
-            if (beta <= alpha):
+            if (beta * K_PRUNING <= alpha ):
                 break
 
         if SAVE_GAME_STATE:

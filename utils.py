@@ -1,37 +1,41 @@
 from collections import deque
 
-def flood_fill_area(game_state, start_pos):
+
+def flood_fill_area(game_state, start_pos, max_steps = 7):
     width, height = game_state["shape"]
     snakes = game_state["snakes"]
 
     # Build set of all occupied cells (by any snake)
     occupied = set()
     for snake in snakes:
-        occupied.update(snake["body"])  # tuples 
+        occupied.update(snake["body"])
 
     visited = set()
-    queue = deque([start_pos])
+    queue = deque([(start_pos, 0)])  # Include step count
     visited.add(start_pos)
 
     while queue:
-        x, y = queue.popleft()
+        (x, y), steps = queue.popleft()
+
+        # Stop exploring paths that exceed the step threshold
+        if steps >= max_steps:
+            continue
 
         for dx, dy in [(-1, 0), (1, 0), (0, -1), (0, 1)]:
             nx, ny = x + dx, y + dy
             neighbor = (nx, ny)
 
-            # Skip if out of bounds
             if not (0 <= nx < width and 0 <= ny < height):
                 continue
 
-            # Skip if already visited or occupied
             if neighbor in visited or neighbor in occupied:
                 continue
 
             visited.add(neighbor)
-            queue.append(neighbor)
+            queue.append((neighbor, steps + 1))
 
-    return len(visited)  # Number of reachable cells (area size)
+    return len(visited)
+
 
 
 def is_on_the_border(game_state, pos):

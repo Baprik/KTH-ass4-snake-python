@@ -11,6 +11,13 @@ def distance_to_closest_body_part(ourSnake, otherSnake):
     return 0
   return minDist
 
+def distance_to_head(ourSnake, otherSnake):
+  (headx, heady) = ourSnake["body"][0]
+  (other_headx, other_heady) = otherSnake["body"][0]
+
+  minDist = math.sqrt((headx-other_headx)**2+(heady-other_heady)**2)
+  return minDist
+
 def distance_to_border(snake, max_y):
     (x, y) = snake["first_move"]
     max_x = max_y
@@ -24,6 +31,10 @@ def distance_to_border(snake, max_y):
     ]
 
     return min(distances)
+def close_to_border(snake, treshhold):
+    (x, y) = snake["first_move"]
+    if x < treshhold or y < treshhold or 11 - x < treshhold or 11 - y < treshhold:
+        return True
 
 def evaluatePoint(game_state, depth, curr_snake_id, main_snake_id, current_turn):
   try:
@@ -81,25 +92,24 @@ def evaluatePoint(game_state, depth, curr_snake_id, main_snake_id, current_turn)
     else:
       health = -300
 
-    if head_pos[0] <= 1 or head_pos[0] >= game_state["shape"][0] - 2 or head_pos[1] <= 0 or head_pos[1] >= game_state["shape"][1] - 2:
-      misposed = -100
-    else:
-      misposed = 0
 
     distanceFromBorder = 0
+    tooCloseToBorder = 0
     
     #for snake in game_state["snakes"]:
     if main_snake["first_move"] != None:
-      distanceFromBorder += distance_to_border(main_snake, game_state["shape"][1] - 1)
+      #distanceFromBorder += distance_to_border(main_snake, game_state["shape"][1] - 1)
+      if close_to_border(snake, 3):
+        tooCloseToBorder = 1
         
     distanceToLongerSnakesAndTeammate = 0
     for snake in game_state["snakes"]:
       if snake == main_snake:
         continue
       if snake["name"] == "MAS2025-12" or len(snake["body"]) > len(main_snake["body"]): #want to increase distance to teammate and longer snakes
-        distanceToLongerSnakesAndTeammate += distance_to_closest_body_part(snake, main_snake)
+        distanceToLongerSnakesAndTeammate += distance_to_head(snake, main_snake)
 
-    return teamMembers * 400  - otherSnakes * 200 + health*2 + distanceFromBorder * 50 + distanceToLongerSnakesAndTeammate * 5#+ area * 10   #misposed  #maybe add distance from eachother
+    return teamMembers * 5000  - otherSnakes * 200 + health + distanceFromBorder * 0 - tooCloseToBorder * 100 + distanceToLongerSnakesAndTeammate * 10 + area * 5   #misposed  #maybe add distance from eachother
 
 
   except KeyError as e:
